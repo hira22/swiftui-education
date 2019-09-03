@@ -8,9 +8,8 @@
 
 import SwiftUI
 
-struct ContentView: View {
-
 // 100までListで表示
+//struct ContentView: View {
 //    let data: [Int] = (0..<100).map{$0}
 //
 //    // returnされるものはViewだけ
@@ -20,9 +19,11 @@ struct ContentView: View {
 //            Text("\(item)")
 //        }
 //    }
+//}
     
     
 // 2.ButtonでBackGroudを変更する
+//struct ContentView: View {
 //    @State var backgroudColor = Color.white
 //    var body: some View {
 //            VStack {
@@ -35,8 +36,10 @@ struct ContentView: View {
 //            }.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
 //                .background(self.backgroudColor)
 //    }
+//}
 
 // 3. VStack, HStack でレイアウトする
+//struct ContentView: View {
 //    var body: some View {
 //
 //        VStack {
@@ -62,23 +65,24 @@ struct ContentView: View {
 //        }.frame(height: UIScreen.main.bounds.height)
 //
 //    }
+//}
     
-// 4.Lineのトーク画面的なものを組む
+// 4.Lineのトークリスト画面的なものを組む
     // TODO: セルを作る
     // Hint: Imageは画像ないのでShapeで
     // TODO: Listで表示する
-    
-    let lineLikeData:[LineLikeData] = (0..<100).map{ i in LineLikeData(id: i)
+struct ContentView: View {
+    let lineLikeData:[LineLikeData] = (0..<100).map{ i in
+        LineLikeData(id: i)
     }
     var body: some View {
-        
         // TODO: [Int]でやってたときの\.selfって何だろう？
-        // \. がdataを指している？
+        // \. が第一引数のDataを指している？
+        // KeyPath<Data.Element, ID>について調べる
         List(lineLikeData, id: \.id) { data in
             LineLikeCell(lineLikeData: data)
         }
     }
-    
 }
 
 struct LineLikeCell: View {
@@ -88,6 +92,7 @@ struct LineLikeCell: View {
             Circle()
                 .frame(width: 50, height: 50, alignment: .center)
                 .foregroundColor(Color.gray)
+            
             VStack {
                 HStack {
                     Text(lineLikeData.name)
@@ -100,7 +105,6 @@ struct LineLikeCell: View {
                     Spacer()
                 }
             }
-            
         }
     }
 }
@@ -112,8 +116,7 @@ struct LineLikeData: Identifiable {
     private let date: Date = Date()
     let message: String = "message"
     
-    var formatter = DateFormatter()
-    
+    var formatter: DateFormatter = DateFormatter()
     
     var dateString: String {
         formatter.locale = Locale(identifier: "ja_JP")
