@@ -68,19 +68,21 @@ struct ContentView: View {
     // Hint: Imageは画像ないのでShapeで
     // TODO: Listで表示する
     
-    let data: [Int] = (0..<100).map{$0}
+    let lineLikeData:[LineLikeData] = (0..<100).map{ i in LineLikeData(id: i)
+    }
     var body: some View {
         
-        List(data, id: \.self) { i in
-            LineLikeCell(id: i)
+        // TODO: [Int]でやってたときの\.selfって何だろう？
+        // \. がdataを指している？
+        List(lineLikeData, id: \.id) { data in
+            LineLikeCell(lineLikeData: data)
         }
     }
     
 }
 
-struct LineLikeCell: View, Identifiable {
-    var id: Int
-    
+struct LineLikeCell: View {
+    var lineLikeData: LineLikeData
     var body: some View {
         HStack{
             Circle()
@@ -88,18 +90,36 @@ struct LineLikeCell: View, Identifiable {
                 .foregroundColor(Color.gray)
             VStack {
                 HStack {
-                    Text("name")
+                    Text(lineLikeData.name)
                     Spacer()
-                    Text("2019/09/03 23:00")
+                    Text(lineLikeData.dateString)
                 }
                 
                 HStack {
-                    Text("hogehogehogehogehogehogehogehoge")
+                    Text(lineLikeData.message)
                     Spacer()
                 }
             }
             
         }
+    }
+}
+
+struct LineLikeData: Identifiable {
+    var id: Int
+    let icon: Color = Color.gray
+    let name: String = "name"
+    private let date: Date = Date()
+    let message: String = "message"
+    
+    var formatter = DateFormatter()
+    
+    
+    var dateString: String {
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateStyle = DateFormatter.Style.short
+        formatter.timeStyle = DateFormatter.Style.short
+        return formatter.string(from: date)
     }
 }
 
