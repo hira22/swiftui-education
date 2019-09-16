@@ -11,7 +11,6 @@
 		0BC5EE8486036ADDE9CA711D /* Pods_swiftui_educationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD6F12710BA158607FDB1B8F /* Pods_swiftui_educationTests.framework */; };
 		4084DCDFB31634B0E968CFCD /* Pods_swiftui_educationUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 070D205C1E51C9F7B5C2FAA0 /* Pods_swiftui_educationUITests.framework */; };
 		CF32C1762327D2B80000D7A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF32C1752327D2B80000D7A3 /* GoogleService-Info.plist */; };
-		CF32C1782327D31E0000D7A3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF32C1772327D31E0000D7A3 /* User.swift */; };
 		CF6A057A231E875000DD9AF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6A0579231E875000DD9AF7 /* AppDelegate.swift */; };
 		CF6A057C231E875000DD9AF7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6A057B231E875000DD9AF7 /* SceneDelegate.swift */; };
 		CF6A057E231E875000DD9AF7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6A057D231E875000DD9AF7 /* ContentView.swift */; };
@@ -48,7 +47,6 @@
 		9C2E1D030118F72074854D51 /* Pods-swiftui-educationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftui-educationTests.release.xcconfig"; path = "Target Support Files/Pods-swiftui-educationTests/Pods-swiftui-educationTests.release.xcconfig"; sourceTree = "<group>"; };
 		B652090ED874A291B706DD39 /* Pods-swiftui-education.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftui-education.debug.xcconfig"; path = "Target Support Files/Pods-swiftui-education/Pods-swiftui-education.debug.xcconfig"; sourceTree = "<group>"; };
 		CF32C1752327D2B80000D7A3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		CF32C1772327D31E0000D7A3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF6A0576231E875000DD9AF7 /* swiftui-education.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swiftui-education.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6A0579231E875000DD9AF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF6A057B231E875000DD9AF7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -136,7 +134,6 @@
 				CF6A0579231E875000DD9AF7 /* AppDelegate.swift */,
 				CF6A057B231E875000DD9AF7 /* SceneDelegate.swift */,
 				CF6A057D231E875000DD9AF7 /* ContentView.swift */,
-				CF32C1772327D31E0000D7A3 /* User.swift */,
 				CF6A057F231E875200DD9AF7 /* Assets.xcassets */,
 				CF6A0584231E875200DD9AF7 /* LaunchScreen.storyboard */,
 				CF6A0587231E875200DD9AF7 /* Info.plist */,
@@ -404,7 +401,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF32C1782327D31E0000D7A3 /* User.swift in Sources */,
 				CF6A057A231E875000DD9AF7 /* AppDelegate.swift in Sources */,
 				CF6A057C231E875000DD9AF7 /* SceneDelegate.swift in Sources */,
 				CF6A057E231E875000DD9AF7 /* ContentView.swift in Sources */,
