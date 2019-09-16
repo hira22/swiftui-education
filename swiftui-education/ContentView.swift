@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// 100までListで表示
+// MARK: 1.100までListで表示
 //struct ContentView: View {
 //    let data: [Int] = (0..<100).map{$0}
 //
@@ -22,7 +22,7 @@ import SwiftUI
 //}
     
     
-// 2.ButtonでBackGroudを変更する
+// MARK: 2.ButtonでBackGroudを変更する
 //struct ContentView: View {
 //    @State var backgroudColor = Color.white
 //    var body: some View {
@@ -38,7 +38,7 @@ import SwiftUI
 //    }
 //}
 
-// 3. VStack, HStack でレイアウトする
+// MARK: 3. VStack, HStack でレイアウトする
 //struct ContentView: View {
 //    var body: some View {
 //
@@ -67,7 +67,7 @@ import SwiftUI
 //    }
 //}
     
-// 4.Lineのトークリスト画面的なものを組む
+// MARK: 4.Lineのトークリスト画面的なものを組む
     // TODO: セルを作る
     // Hint: Imageは画像ないのでShapeで
     // TODO: Listで表示する
@@ -126,7 +126,7 @@ import SwiftUI
 //}
 
 
-//5. 指でなぞるとついてくるview
+// MARK: 5. 指でなぞるとついてくるview
 //struct ContentView: View {
 //    @State var translation: CGSize = .zero
 //    var body: some View {
@@ -149,7 +149,7 @@ import SwiftUI
 //    }
 //}
 
-//6. 扇型に並べるRectangle
+// MARK: 6. 扇型に並べるRectangle
 //struct ContentView: View {
 //    let size = CGSize(width: 100, height: 150)
 //    var body: some View {
@@ -175,8 +175,71 @@ import SwiftUI
 //    }
 //}
 
-// 7.Lineのトークリスト画面的なものを組む
+// MARK: 7.Lineのトークリスト画面的なものを組む
     // TODO: タップしたらアラート
+//struct ContentView: View {
+//    let lineLikeData: [LineLikeData] = (0..<100).map{ i in
+//        LineLikeData(id: i)
+//    }
+//    var body: some View {
+//        List(lineLikeData, id: \.id) { data in
+//            LineLikeCell(lineLikeData: data)
+//        }
+//    }
+//}
+
+//// @Stateが更新されるとbodyが再描画される
+//struct LineLikeCell: View {
+//    @State var isShown: Bool = false
+//
+//    var lineLikeData: LineLikeData
+//    var body: some View {
+//        Button(action: {
+//            self.isShown.toggle()
+//        }){
+//            HStack {
+//                Circle()
+//                    .frame(width: 50, height: 50, alignment: .center)
+//                    .foregroundColor(Color.gray)
+//
+//                VStack {
+//                    HStack {
+//                        Text(lineLikeData.name)
+//                        Spacer()
+//                        Text(lineLikeData.dateString)
+//                    }
+//
+//                    HStack {
+//                        Text(lineLikeData.message)
+//                        Spacer()
+//                    }
+//                }
+//            }
+//        }
+//        .sheet(isPresented: $isShown, content: {
+//            Rectangle()
+////            Alert(title: Text("タップできません"))
+//        })
+//
+//    }
+//}
+//
+//struct LineLikeData: Identifiable {
+//    var id: Int
+//    let icon: Color = Color.gray
+//    let name: String = "name"
+//    private let date: Date = Date()
+//    let message: String = "messagemessagemessage"
+//
+//    var formatter: DateFormatter = DateFormatter()
+//
+//    var dateString: String {
+//        formatter.locale = Locale(identifier: "ja_JP")
+//        formatter.dateStyle = DateFormatter.Style.short
+//        formatter.timeStyle = DateFormatter.Style.short
+//        return formatter.string(from: date)
+//    }
+//}
 struct ContentView: View {
     let lineLikeData: [LineLikeData] = (0..<100).map{ i in
         LineLikeData(id: i)
