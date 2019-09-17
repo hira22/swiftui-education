@@ -258,7 +258,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .trailing) {
-            List( self.dataSource.users, id: \.id) { user in
+            List( self.dataSource.users) { user in
                 UserRow(user: user)
             }
             VStack {
