@@ -242,71 +242,183 @@ import SwiftUI
 //}
 
 // MARK: 8.Firebaseと連携
-import Firebase
-import FirebaseCore
-import FirebaseFirestore
-import Combine
-
-// hint : observable Objectを使う
-// observable Object　に準拠したモデル(Observed Object)をListに渡す
+//import Firebase
+//import FirebaseCore
+//import FirebaseFirestore
+//import Combine
 //
+//// hint : observable Objectを使う
+//// observable Object　に準拠したモデル(Observed Object)をListに渡す
+////
+//
+//let db = Firestore.firestore()
+//
+//struct ContentView: View {
+//    @ObservedObject (initialValue: UserDatasource()) var dataSource: UserDatasource
+//
+//    var body: some View {
+//        ZStack(alignment: .trailing) {
+//            List( self.dataSource.users) { user in
+//                UserRow(user: user)
+//            }
+//            VStack {
+//                Spacer()
+//                Button("Add",  action: {
+//                    db.collection("users").addDocument(data: ["name" : randomString(length: 6)]){ error in
+//                        if let error = error {
+//                            print("Error adding document: \(error)")
+//                        }
+//                    }
+//                }).padding()
+//            }
+//        }
+//    }
+//}
+//
+//struct UserRow: View {
+//    var user: User
+//    var body: some View {
+//        Text("\(user.name)")
+//    }
+//}
+//
+//class UserDatasource: ObservableObject {
+//    @Published var docments: [QueryDocumentSnapshot] = []
+//    var users: [User] {
+//        return self.docments.map({docment in
+//            return User(id: docment.documentID, data: docment.data())
+//        })
+//    }
+//
+//    init() {
+//        db.collection("users").addSnapshotListener { (querySnapshot, error) in
+//            guard let documents = querySnapshot?.documents else {
+//                       print("Error fetching documents: \(error!)")
+//                       return
+//                   }
+//            self.docments = documents
+//        }
+//    }
+//}
+//
+//struct User: Identifiable {
+//    var id: String
+//    var name: String = ""
+//    init(id: String, data: [String: Any]) {
+//        self.id = id
+//        self.name = data["name"] as! String
+//    }
+//}
 
-let db = Firestore.firestore()
+// MARK: 9.BindingとPresentaionModeでモーダル表示・非表示
+//struct ContentView: View {
+//    @State var isContentPresented: Bool = false
+//
+//    var body: some View {
+//        Button("present") {
+//            self.isContentPresented = true
+//        }.sheet(isPresented: $isContentPresented) {
+//            PresentView(isPresented: self.$isContentPresented)
+//        }
+//    }
+//}
+//
+//struct PresentView: View {
+//    @Binding var isPresented: Bool
+//    var body: some View {
+//        Button("back") {
+//            self.isPresented = false
+//        }
+//    }
+//}
+
+//struct ContentView: View {
+//    @State var isContentPresented: Bool = false
+//
+//    var body: some View {
+//        Button("present") {
+//            self.isContentPresented = true
+//        }.sheet(isPresented: $isContentPresented) {
+//            PresentView()
+//        }
+//    }
+//}
+//
+//struct PresentView: View {
+//    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+//    var body: some View {
+//        Button("back") {
+//            self.presentationMode.wrappedValue.dismiss()
+//        }
+//    }
+//}
+
+
+// MARK: 10. Userの編集画面
 
 struct ContentView: View {
-    @ObservedObject (initialValue: UserDatasource()) var dataSource: UserDatasource
-
+    @State var isEditViewPresented: Bool = false
+    @State var user: User = User(
+        name: "Masayuki Hiraoka",
+        age: 27,
+        bio: "Tokyo, Japan"
+    )
     var body: some View {
-        ZStack(alignment: .trailing) {
-            List( self.dataSource.users) { user in
-                UserRow(user: user)
-            }
+        NavigationView {
             VStack {
-                Spacer()
-                Button("Add",  action: {
-                    db.collection("users").addDocument(data: ["name" : randomString(length: 6)]){ error in
-                        if let error = error {
-                            print("Error adding document: \(error)")
-                        }
-                    }
-                }).padding()
+                Text(user.name)
+                Divider()
+                Text(user.ageString)
+                Divider()
+                Text(user.bio)
+                Divider()
             }
+            .navigationBarTitle("Profile")
+            .navigationBarItems(trailing:
+                Button("Edit") {
+                    self.isEditViewPresented = true
+                }.sheet(isPresented: self.$isEditViewPresented) {
+                    EditView(user: self.$user, defaultUser: self.user)
+                }
+            )
         }
+        
     }
 }
 
-struct UserRow: View {
-    var user: User
+struct EditView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Binding var user: User
+    @State var defaultUser: User
+    
     var body: some View {
-        Text("\(user.name)")
-    }
-}
-
-class UserDatasource: ObservableObject {
-    @Published var docments: [QueryDocumentSnapshot] = []
-    var users: [User] {
-        return self.docments.map({docment in
-            return User(id: docment.documentID, data: docment.data())
-        })
-    }
-
-    init() {
-        db.collection("users").addSnapshotListener { (querySnapshot, error) in
-            guard let documents = querySnapshot?.documents else {
-                       print("Error fetching documents: \(error!)")
-                       return
-                   }
-            self.docments = documents
+        NavigationView {
+            VStack {
+                TextField("name", text: $defaultUser.name)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("age", value: $defaultUser.age, formatter: NumberFormatter())
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("bio", text: $defaultUser.bio)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            }
+            .navigationBarTitle("Edit Profile")
+            .navigationBarItems(trailing:
+                Button("Done") {
+                    self.$user.wrappedValue = self.defaultUser
+//                    print(self.presentationMode.wrappedValue)
+                    self.presentationMode.wrappedValue.dismiss()
+            })
         }
     }
 }
 
-struct User: Identifiable {
-    var id: String
+struct User {
     var name: String = ""
-    init(id: String, data: [String: Any]) {
-        self.id = id
-        self.name = data["name"] as! String
+    var age: Int = 0
+    var bio: String = ""
+    
+    var ageString: String {
+        return "\(age) 歳"
     }
 }
 
