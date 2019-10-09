@@ -355,23 +355,130 @@ import SwiftUI
 
 
 // MARK: 10. Userの編集画面
+//
+//struct ContentView: View {
+//    @State var isEditViewPresented: Bool = false
+//    @State var user: User = User(
+//        name: "Masayuki Hiraoka",
+//        age: 27,
+//        bio: "Tokyo, Japan"
+//    )
+//    var body: some View {
+//        NavigationView {
+//            VStack {
+//                Text(user.name)
+//                Divider()
+//                Text(user.ageString)
+//                Divider()
+//                Text(user.bio)
+//                Divider()
+//            }
+//            .navigationBarTitle("Profile")
+//            .navigationBarItems(trailing:
+//                Button("Edit") {
+//                    self.isEditViewPresented = true
+//                }.sheet(isPresented: self.$isEditViewPresented) {
+//                    EditView(user: self.$user, defaultUser: self.user)
+//                }
+//            )
+//        }
+//
+//    }
+//}
+//
+//struct EditView: View {
+//    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+//    @Binding var user: User
+//    @State var defaultUser: User
+//
+//    var body: some View {
+//        NavigationView {
+//            VStack {
+//                TextField("name", text: $defaultUser.name)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                TextField("age", value: $defaultUser.age, formatter: NumberFormatter())
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                TextField("bio", text: $defaultUser.bio)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//            }
+//            .navigationBarTitle("Edit Profile")
+//            .navigationBarItems(trailing:
+//                Button("Done") {
+//                    self.$user.wrappedValue = self.defaultUser
+////                    print(self.presentationMode.wrappedValue)
+//                    self.presentationMode.wrappedValue.dismiss()
+//            })
+//        }
+//    }
+//}
+//
+//struct User {
+//    var name: String = ""
+//    var age: Int = 0
+//    var bio: String = ""
+//
+//    var ageString: String {
+//        return "\(age) 歳"
+//    }
+//}
+
+
+// MARK: 11. Userの編集画面をFirebaseと連携
+
+import Firebase
+import FirebaseCore
+import FirebaseFirestore
+import Combine
+
+let db = Firestore.firestore()
 
 struct ContentView: View {
+    @ObservedObject (initialValue: UserDatasource()) var dataSource: UserDatasource
+    
+    var body: some View {
+        NavigationView {
+            List( self.dataSource.users) { user in
+                NavigationLink(destination: UserView(user: user)) {
+                    HStack {
+                        Text("name")
+                        Divider()
+                        Text(user.name)
+                    }
+                }
+                .navigationBarTitle("Users")
+            }
+        }
+    }
+}
+
+struct UserView: View {
+    @State var user: User
     @State var isEditViewPresented: Bool = false
-    @State var user: User = User(
-        name: "Masayuki Hiraoka",
-        age: 27,
-        bio: "Tokyo, Japan"
-    )
+    
     var body: some View {
         NavigationView {
             VStack {
-                Text(user.name)
+                HStack {
+                    Text("name")
+                    Divider()
+                    Text(user.name)
+                }
+                .frame(height: 50)
                 Divider()
-                Text(user.ageString)
+                HStack {
+                    Text("age")
+                    Divider()
+                    Text(user.ageString)
+                }
+                .frame(height: 50)
                 Divider()
-                Text(user.bio)
-                Divider()
+                HStack {
+                    Text("bio")
+                    Divider()
+                    Text(user.bio)
+                    
+                }
+                .frame(height: 50)
             }
             .navigationBarTitle("Profile")
             .navigationBarItems(trailing:
@@ -382,7 +489,6 @@ struct ContentView: View {
                 }
             )
         }
-        
     }
 }
 
@@ -394,9 +500,16 @@ struct EditView: View {
     var body: some View {
         NavigationView {
             VStack {
+                
                 TextField("name", text: $defaultUser.name)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                TextField("age", value: $defaultUser.age, formatter: NumberFormatter())
+                TextField(
+                    "age",
+                    value: $defaultUser.age,
+                    formatter: NumberFormatter(),  // FIXME: Not Workingらしい
+                    onEditingChanged: { value in
+                        print(self.$defaultUser.age.wrappedValue)}
+                )
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 TextField("bio", text: $defaultUser.bio)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -405,20 +518,61 @@ struct EditView: View {
             .navigationBarItems(trailing:
                 Button("Done") {
                     self.$user.wrappedValue = self.defaultUser
-//                    print(self.presentationMode.wrappedValue)
-                    self.presentationMode.wrappedValue.dismiss()
+                    // Update
+                    print(self.user)
+                    db.collection("users")
+                        .document(self.user.id)
+                        .updateData([
+                            "name": self.$user.name.wrappedValue,
+                            "age": self.$user.age.wrappedValue,
+                            "bio": self.$user.bio.wrappedValue,
+                            "updateAt": FieldValue.serverTimestamp()
+                        ]) { error in
+                            if let error: Error = error {
+                                print("Error adding document: \(error)")
+                            }
+                            self.presentationMode.wrappedValue.dismiss()
+                    }
             })
         }
     }
 }
 
-struct User {
+struct User: Identifiable {
+    var id: String
     var name: String = ""
-    var age: Int = 0
+    var age: String = ""
     var bio: String = ""
     
     var ageString: String {
         return "\(age) 歳"
+    }
+    
+    init(id: String, data: [String: Any]) {
+        self.id = id
+        self.name = data["name"] as! String
+        self.age = data["age"] as? String ?? ""
+        self.bio = data["bio"] as? String ?? ""
+    }
+}
+
+class UserDatasource: ObservableObject {
+    @Published var docments: [QueryDocumentSnapshot] = []
+    var users: [User] {
+        return self.docments.map{ docment in
+            return User(id: docment.documentID, data: docment.data())
+        }
+    }
+    
+    init() {
+        db.collection("users")
+            .addSnapshotListener { (querySnapshot, error) in
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documents: \(error!)")
+                    return
+                }
+                self.docments = documents
+        }
     }
 }
 
